@@ -1,0 +1,77 @@
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: metallb
+    url: https://metallb.github.io/metallb
+releases:
+  - name: grafana-k8s-monitoring
+    namespace: monitoring
+    chart: grafana/k8s-monitoring
+    version: v1.0.12
+    values:
+      # - prometheus-node-exporter:
+      #     hostRootFsMount:
+      #       enabled: false
+      - cluster:
+          name: base
+      - externalServices:
+          prometheus:
+            secret:
+              name: grafana-agent-credentials
+              create: false
+              namespace: monitoring
+            hostKey: prometheus_host
+            basicAuth:
+              usernameKey: prometheus_username
+              passwordKey: prometheus_password
+          loki:
+            secret:
+              name: grafana-agent-credentials
+              create: false
+              namespace: monitoring
+            hostKey: loki_host
+            basicAuth:
+              usernameKey: loki_username
+              passwordKey: loki_password
+          tempo:
+            secret:
+              name: grafana-agent-credentials
+              create: false
+              namespace: monitoring
+            hostKey: tempo_host
+            basicAuth:
+              usernameKey: tempo_username
+              passwordKey: tempo_password
+      - metrics:
+          enabled: true
+          cost:
+            enabled: false
+          node-exporter:
+            enabled: true
+      - logs:
+          enabled: true
+          pod_logs:
+            enabled: true
+          cluster_events:
+            enabled: true
+      - traces:
+          enabled: true
+      - receivers:
+          grpc:
+            enabled: true
+          http:
+            enabled: true
+          zipkin:
+            enabled: true
+      - opencost:
+          enabled: false
+      - kube-state-metrics:
+          enabled: true
+      - prometheus-node-exporter:
+          enabled: true
+      - prometheus-operator-crds:
+          enabled: true
+  - name: metallb
+    namespace: metallb-system
+    chart: metallb/metallb
+    version: v0.14.5

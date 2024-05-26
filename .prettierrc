@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": ["**/*.gotmpl"],
+      "options": {
+        "bracketSpacing": false
+      }
+    }
+  ]
+}
